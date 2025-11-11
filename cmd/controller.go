@@ -61,7 +61,7 @@ func init() {
 	controllerCmd.PersistentFlags().BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
-	controllerCmd.PersistentFlags().BoolVar(&secureMetrics, "metrics-secure", false,
+	controllerCmd.PersistentFlags().BoolVar(&secureMetrics, "metrics-secure", true,
 		"If set, the metrics endpoint is served securely via HTTPS. Use --metrics-secure=false to use HTTP instead.")
 	controllerCmd.PersistentFlags().StringVar(&webhookCertPath, "webhook-cert-path", "",
 		"The directory that contains the webhook certificate.")
