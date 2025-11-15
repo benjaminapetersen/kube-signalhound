@@ -162,7 +162,7 @@ func updateSlackPanel(tab *v1alpha1.DashboardTab, currentTest *v1alpha1.TestResu
 
 // updateGitHubPanel writes down to the right panel (GitHub) content.
 func updateGitHubPanel(tab *v1alpha1.DashboardTab, currentTest *v1alpha1.TestResult, token string) {
-	// create the filled out issue template object
+	// create the filled-out issue template object
 	splitBoard := strings.Split(tab.BoardHash, "#")
 	issue := &IssueTemplate{
 		BoardName:    splitBoard[0],
@@ -186,9 +186,9 @@ func updateGitHubPanel(tab *v1alpha1.DashboardTab, currentTest *v1alpha1.TestRes
 		position.SetText(fmt.Sprintf("[red]error: %v", err.Error()))
 		return
 	}
-	issueTemplate := template.String()
+	issueBody := template.String()
 	issueTitle := fmt.Sprintf("[%v] %v", prefixTitle, currentTest.TestName)
-	githubPanel.SetText(issueTemplate, false)
+	githubPanel.SetText(issueBody, false)
 
 	// set input capture, ctrl-space for clipboard copy, ctrl-b for
 	// automatic GitHub draft issue creation.
@@ -209,8 +209,8 @@ func updateGitHubPanel(tab *v1alpha1.DashboardTab, currentTest *v1alpha1.TestRes
 			}()
 		}
 		if event.Key() == tcell.KeyCtrlB {
-			gh := github.NewGithub(context.Background(), token)
-			if err := gh.CreateDraftIssue(issueTitle, issueTemplate); err != nil {
+			gh := github.NewProjectManager(context.Background(), token)
+			if err := gh.CreateDraftIssue(issueTitle, issueBody, tab.BoardHash); err != nil {
 				position.SetText(fmt.Sprintf("[red]error: %v", err.Error()))
 				return event
 			}
