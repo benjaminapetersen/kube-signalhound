@@ -96,7 +96,8 @@ func (g *ProjectManager) GetProjectFields() ([]ProjectFieldInfo, error) {
 		return nil, fmt.Errorf("failed to query project fields: %w", err)
 	}
 
-	var fields []ProjectFieldInfo
+	fields := make([]ProjectFieldInfo, 0, len(query.Node.ProjectV2.Fields.Nodes))
+
 	for _, node := range query.Node.ProjectV2.Fields.Nodes {
 		var fieldID g4.ID
 		var fieldName g4.String
