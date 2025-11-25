@@ -101,7 +101,7 @@ func updateTabsPanel(tabs []*v1alpha1.DashboardTab) {
 
 				brokenPanel.Clear()
 				for _, test := range tab.TestRuns {
-					brokenPanel.AddItem(test.TestName, "", 0, nil)
+					brokenPanel.AddItem(tview.Escape(test.TestName), "", 0, nil)
 				}
 				app.SetFocus(brokenPanel)
 				brokenPanel.SetCurrentItem(0)
