@@ -167,8 +167,8 @@ func filterTabTests(testGroup *TestGroup, state string, minFailure, minFlake int
 	jobName := strings.Split(testGroup.Query, "/")
 	for _, test := range testGroup.Tests {
 		errMessage, failures, firstFailure := test.RenderStatuses(testGroup.Timestamps)
-		if (failures >= minFailure && state == v1alpha1.FAILING_STATUS) ||
-			(failures >= minFlake && state == v1alpha1.FLAKY_STATUS) {
+		if ((failures >= minFailure || minFailure == 0) && state == v1alpha1.FAILING_STATUS) ||
+			((failures >= minFlake || minFlake == 0) && state == v1alpha1.FLAKY_STATUS) {
 			testName := test.Name
 			if strings.Contains(testName, e2eSuitePrefix) {
 				testName = prow.GetRegexParameter(testRegex, testName)["TEST"]
@@ -176,11 +176,16 @@ func filterTabTests(testGroup *TestGroup, state string, minFailure, minFlake int
 			if strings.Contains(testName, kubetestPrefix) {
 				testName = strings.TrimPrefix(strings.TrimPrefix(testName, "kubetest2."), "kubetest.")
 			}
+
+			var prowJobURL string
+			if firstFailure >= 0 && firstFailure < len(testGroup.Changelists) {
+				prowJobURL = cleanHTMLCharacters(fmt.Sprintf("https://prow.k8s.io/view/gs/%s/%s", testGroup.Query, testGroup.Changelists[firstFailure]))
+			}
 			tests = append(tests, v1alpha1.TestResult{
 				TestName:        test.Name,
 				LatestTimestamp: testGroup.Timestamps[0],
 				FirstTimestamp:  testGroup.Timestamps[len(testGroup.Timestamps)-1],
-				ProwJobURL:      cleanHTMLCharacters(fmt.Sprintf("https://prow.k8s.io/view/gs/%s/%s", testGroup.Query, testGroup.Changelists[firstFailure])),
+				ProwJobURL:      prowJobURL,
 				TriageURL:       cleanHTMLCharacters(fmt.Sprintf("https://storage.googleapis.com/k8s-triage/index.html?job=%s$&test=%s", cleanHTMLCharacters(jobName[len(jobName)-1]), cleanHTMLCharacters(testName))),
 				ErrorMessage:    errMessage,
 			})
