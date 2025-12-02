@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+
 	"sigs.k8s.io/signalhound/api/v1alpha1"
 	"sigs.k8s.io/signalhound/internal/testgrid"
 	"sigs.k8s.io/signalhound/internal/tui"
@@ -30,8 +31,10 @@ var (
 func init() {
 	rootCmd.AddCommand(abstractCmd)
 
-	abstractCmd.PersistentFlags().IntVarP(&minFailure, "min-failure", "f", 2, "minimum threshold for test failures")
-	abstractCmd.PersistentFlags().IntVarP(&minFlake, "min-flake", "m", 3, "minimum threshold for test flakeness")
+	abstractCmd.PersistentFlags().IntVarP(&minFailure, "min-failure", "f", 0,
+		"minimum threshold for test failures, to disable use 0. Defaults to 0.")
+	abstractCmd.PersistentFlags().IntVarP(&minFlake, "min-flake", "m", 0,
+		"minimum threshold for test flakeness, to disable use 0. Defaults to 0.")
 	abstractCmd.PersistentFlags().IntVarP(&refreshInterval, "refresh-interval", "r", 0,
 		"refresh interval in seconds (0 to disable auto-refresh)")
 
